@@ -37,3 +37,36 @@ def ac3(csp, arcs_queue=None, current_domains=None, assignment=None):
                     arcs_queue.add((neighbor, var1))
 
     return True, current_domains
+def backtracking(csp):
+    def mrv_variable(assignment, current_domains):
+        unassigned_vars = [var for var in csp.variables if var not in assignment]
+        return min(unassigned_vars, key=lambda var: len(current_domains[var]))
+
+    def backtracking_helper(assignment, current_domains):
+        if len(assignment) == len(csp.variables):
+            return assignment
+
+        var = mrv_variable(assignment, current_domains)
+        
+        for value in current_domains[var]:
+            new_assignment = assignment.copy()
+            new_assignment[var] = value
+
+            if csp.check_partial_assignment(new_assignment):
+                new_domains = copy.deepcopy(current_domains)
+                new_domains[var] = [value]
+
+                unassigned_neighbors = [neighbor for neighbor in csp.adjacency[var] if neighbor not in new_assignment]
+                arcs_queue = [(neighbor, var) for neighbor in unassigned_neighbors]
+
+                is_consistent, updated_domains = ac3(csp, arcs_queue=arcs_queue, current_domains=new_domains, assignment=new_assignment)
+
+                if is_consistent:
+                    result = backtracking_helper(new_assignment, updated_domains)
+                    if result is not None:
+                        return result
+        
+        return None
+
+    initial_domains = {var: copy.deepcopy(csp.domains[var]) for var in csp.variables}
+    return backtracking_helper({}, initial_domains)
