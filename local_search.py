@@ -1,14 +1,15 @@
 import numpy as np
 import copy
-def tour_cost(state,adj_matrix):
+def tour_cost(state, adj_matrix):
     cost = 0
-    N = len(state)
-    for i in range(N):
-        j = ((i + 1) % N)
-        e_cost_e = adj_matrix[state[i], state[j]]
-        if np.isnan(e_cost_e):
+    for i in range(len(state)-1):
+        if np.isnan(adj_matrix[state[i], state[i+1]]): # non-existent edge
             return np.nan
-        cost += e_cost_e
+        cost += adj_matrix[state[i], state[i+1]]
+        if np.isnan(adj_matrix[state[-1], state[0]]): # non-existent edge
+            return np.nan
+        cost += adj_matrix[state[-1], state[0]]
+
     return cost
 def random_swap(state):
     idx1, idx2 = np.random.choice(len(state), size=2, replace=False)
