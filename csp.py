@@ -1,4 +1,6 @@
 import copy
+import matplotlib.pyplot as plt
+import seaborn as sns
 def ac3(csp, arcs_queue=None, current_domains=None, assignment=None):
     # Create a deep copy of the domains to avoid modifying the original CSP
     if current_domains is None:
@@ -134,3 +136,4 @@ class SudokuCSP:
 
         # Check if assignment is consistent
         return self.check_partial_assignment(assignment)
+
