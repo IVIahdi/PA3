@@ -4,11 +4,11 @@ import copy
 def tour_cost(state, adj_matrix):
     cost = 0
     for i in range(len(state)):
-        for j in range(i):
-            if adj_matrix[state[i],state[j]] != np.nan:
-                cost += adj_matrix[state[i],state[j]]
-            else:
-                return np.nan
+        j = (1+i) % len(state)
+        if not np.isnan(adj_matrix[state[i],state[j]]):
+            cost+= adj_matrix[state[i],state[j]]
+        else:
+            return np.nan
     return cost
 
 def random_swap(state):
