@@ -39,9 +39,7 @@ if __name__ == "__main__":
     # tests 1
     N = 20
     adj_matrix = gen_rand_graph(N=N)
-    print(adj_matrix)
     state1 = sample_valid_tour(adj_matrix)
-    print(state1)
     tcost = tour_cost(state1, adj_matrix)
     
     print('TSP state: {}'.format(state1))

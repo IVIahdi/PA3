@@ -3,8 +3,8 @@ import copy
 
 def tour_cost(state, adj_matrix):
     cost = 0
-    for i in range(len(state)):
-        j = (1+i) % len(state)
+    for i in range(len(state)-1):
+        j = (1+i)
         if not np.isnan(adj_matrix[state[i],state[j]]):
             cost+= adj_matrix[state[i],state[j]]
         else:
@@ -23,10 +23,10 @@ def simulated_annealing(initial_state, adj_matrix, initial_T=1000):
     T = initial_T
     current = initial_state
     iters = 0
-    while True:
+    while T >= 1e-14:
         T = schedule(T)
-        if T < 10e-14:
-            break
+        if T < 1e-14:
+            return current, iters
         next_state = random_swap(current)
         deltaE = tour_cost(current, adj_matrix) - tour_cost(next_state, adj_matrix)
         u = np.random.uniform()
@@ -34,6 +34,5 @@ def simulated_annealing(initial_state, adj_matrix, initial_T=1000):
             current = next_state
         elif deltaE <= 0 and u <= np.exp(deltaE / T):
             current = next_state
-        
         iters += 1
     return current, iters
