@@ -10,20 +10,14 @@ def ac3(csp, arcs_queue=None, current_domains=None, assignment=None):
                 if csp.constraint_consistent(var1, val1, var2, val2):
                     has_valid_neighbor = True
                     break
-
             if not has_valid_neighbor:
                 current_domains[var1].remove(val1)
                 revised = True
-
         return revised
 
-    if arcs_queue is None:
-        arcs_queue = {(var1, var2) for var1 in csp.variables for var2 in csp.adjacency[var1]}
-    else:
-        arcs_queue = set(arcs_queue)
-
-    if current_domains is None:
-        current_domains = copy.deepcopy(csp.domains)
+    arcs_queue = {(var1, var2) for var1 in csp.variables for var2 in csp.adjacency[var1]} if arcs_queue is None else set(arcs_queue)
+    
+    current_domains = copy.deepcopy(csp.domains) if current_domains is None else current_domains
 
     while arcs_queue:
         (var1, var2) = arcs_queue.pop()
@@ -71,9 +65,10 @@ def backtracking(csp):
     return backtracking_helper({}, initial_domains)
 class SudokuCSP:
     def __init__(self, partial_assignment={}):
-        self.variables = [(i, j) for i in range(1, 10) for j in range(1, 10)]
-        self.domains = {}
         self.adjacency = {}
+        self.domains = {}
+        self.variables = [(i, j) for i in range(1, 10) for j in range(1, 10)]
+        
 
         for var in self.variables:
             self.domains[var] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -84,34 +79,27 @@ class SudokuCSP:
         for var in self.variables:
             self.adjacency[var] = []
 
-                # Add row constraints
+            # Add row constraints
             for j in range(1, 10):
                 if j != var[1]:
                     self.adjacency[var].append((var[0], j))
 
-                # Add column constraints
+            # Add column constraints
             for i in range(1, 10):
                 if i != var[0]:
                     self.adjacency[var].append((i, var[1]))
 
             # Add square constraints
-            square_x = (var[0] - 1) // 3
-            square_y = (var[1] - 1) // 3
+            square_x, square_y = (var[0] - 1) // 3 , (var[1] - 1) // 3
             for i in range(3):
                 for j in range(3):
-                    x = square_x * 3 + i + 1
-                    y = square_y * 3 + j + 1
+                    x, y = square_x * 3 + i + 1, square_y * 3 + j + 1
                     if x != var[0] and y != var[1] and (x, y) not in self.adjacency[var]:
                         self.adjacency[var].append((x, y))
+
     def constraint_consistent(self, var1, val1, var2, val2):
-
-        if var2 not in self.adjacency[var1]:  # var1 and var2 are not neighbors
-            return True
-
-        if val1 != val2:  # val1 and val2 are different, constraint satisfied
-            return True
-
-        return False
+        return True if var2 not in self.adjacency[var1] or val1 != val2 else False
+    
     def check_partial_assignment(self, assignment):
         if assignment is None:
             return False
@@ -124,29 +112,17 @@ class SudokuCSP:
 
         return True
     def is_goal(self, assignment):
-        if assignment is None:
-            return False
-
         # Check if assignment is complete
-        if set(assignment.keys()) != set(self.variables):
-            return False
-
         # Check if assignment is consistent
-        return self.check_partial_assignment(assignment)
+        return False if assignment is None or set(assignment.keys()) != set(self.variables) else self.check_partial_assignment(assignment)
+
 def visualize_sudoku_solution(assignment_solution, file_name):
-    # Convert assignment solution to 2D array
-    sudoku_array = [[0] * 9 for _ in range(9)]
-    for key, value in assignment_solution.items():
-        row, col = key
-        sudoku_array[row-1][col-1] = value
-    
-    # Set figure size and plot heatmap
+    sudoku_array = [[0] * 9 for i in range(9)]
+    for k, v in assignment_solution.items():
+        row, col = k
+        sudoku_array[row-1][col-1] = v
     plt.figure(figsize=(9, 9))
     sns.heatmap(data=sudoku_array, annot=True, linewidths=1.5, linecolor='k', cbar=False)
-    
-    # Invert y-axis
     plt.gca().invert_yaxis()
-    
-    # Save and close figure
     plt.savefig(file_name)
     plt.close()
