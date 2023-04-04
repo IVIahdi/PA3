@@ -12,7 +12,7 @@ if __name__ == "__main__":
                           (1,1):4, (1,5):7, (1,7):8, (1,8):3, (1,9):6}
     sudoku = SudokuCSP(partial_assignment)
     sol_assignment = backtracking(sudoku)
-    visualize_sudoku_solution(sol_assignment, './sudoku1.png')
+    visualize_sudoku_solution(sol_assignment, 'sudoku1.png')
     plt.close()
     
     partial_assignment = {(9,2):2, (9,3):3, 
@@ -24,5 +24,5 @@ if __name__ == "__main__":
                           (1,1):5, (1,4):9, (1,6):8}
     sudoku = SudokuCSP(partial_assignment)
     sol_assignment = backtracking(sudoku)
-    visualize_sudoku_solution(sol_assignment, './sudoku2.png')
+    visualize_sudoku_solution(sol_assignment, 'sudoku2.png')
     plt.close()
